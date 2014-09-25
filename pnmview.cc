@@ -36,14 +36,14 @@ int main(int argc, char const *argv[])
 	PnmImage im;
 	char fileALoad[255];
 	char fileASave[255];
+    int seuil = 0;
 
 	std::cout << "Entrer le path de l'image à sobeliser" << std::endl;
 	std::cin >> fileALoad;
 	im.loadFromFile(fileALoad);
-	//im.appliqueSobel();
+	im.appliqueSobel(0);
 	std::cout << "Entrer le path de l'image à sauver" << std::endl;
 	std::cin >> fileASave;
-	im.saveToFile(fileASave);
 
 	sf::Window window(sf::VideoMode(im.getMWidth(), im.getMHeight()), "Preview", sf::Style::Default, sf::ContextSettings(32));
 	window.setVerticalSyncEnabled(true);
@@ -88,12 +88,11 @@ int main(int argc, char const *argv[])
     GLuint texture;
     glGenTextures(1, &texture);
     std::cout << "Width - height : " << im.getMWidth() << im.getMHeight() << std::endl;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, im.getMWidth(), im.getMHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, im.getRgb());
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, im.getMWidth(), im.getMHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, im.getRgb());
 
 	bool running = true;
     while (running)
@@ -109,12 +108,26 @@ int main(int argc, char const *argv[])
             {
                 glViewport(0, 0, event.size.width, event.size.height);
             }
+            else if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::A)
+                {
+                    seuil++;
+                }
+                else if (event.key.code == sf::Keyboard::Z)
+                {
+                    seuil--;
+                }
+            }
         }
-
+        im.appliqueSobel(seuil);
+        uint8_t* output = im.getRgb();
+        glTexSubImage2D(GL_TEXTURE_2D,0,0,0,im.getMWidth(), im.getMHeight(),GL_RGB, GL_UNSIGNED_BYTE, output);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_QUADS, 0, 4);
         window.display();
+        delete[] output;
     }
-
+    im.saveToFile(fileASave);
 	return 0;
 }

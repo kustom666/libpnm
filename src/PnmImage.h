@@ -20,7 +20,7 @@ public:
 	void loadFromFile(std::string iFileName);
 	void saveToFile(std::string iFileName);
 
-	void appliqueSobel();
+	void appliqueSobel(int aSeuil);
 
 	int getMType(){return mType;}
 	uint8_t* getRgb();
