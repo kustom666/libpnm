@@ -1,0 +1,8 @@
+bin/*
+*.o
+*.exe
+pnmview
+*.pgm
+*.ppm
+*.so
+*.a

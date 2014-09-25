@@ -35,12 +35,13 @@ void PnmImage::loadFromFile(char* iFileName)
 
 		if(mData[0] == (uint8_t)'P' && mData[1] == (uint8_t)'5')
 		{
-			mType = "Binary PGM";
+			mType = IMG_PGM_BIN;
 			loadBin();
 		}
-		else if(mData[0] == (uint8_t)'P' && mData[1] == (uint8_t)'2')
+		else if(mData[0] == (uint8_t)'P' && mData[1] == (uint8_t)'6')
 		{
-			mType = "ASCII PGM";
+			mType = IMG_PPM_BIN;
+			loadBin();
 		}
 		utilise = true;
 	}catch(std::exception e)
@@ -53,25 +54,65 @@ void PnmImage::saveToFile(char* iFileName)
 {
 	std::ofstream file(iFileName, std::ios::out | std::ios::binary);
 	file.write((char*)mHeader, mOffsetPixmap);
-	file.write((char*)mPixmap, mWidth * mHeight);
+	if(mType == IMG_PGM_BIN)
+	{
+		file.write((char*)mPixmap, mWidth * mHeight);
+	}
+	else
+	{
+		file.write((char*)mPixmap, mWidth * mHeight * 3);
+	}
 }
 
 void PnmImage::appliqueSobel()
 {
-	uint8_t* mPixCopy = new uint8_t[mWidth*mHeight];
-	memcpy(mPixCopy, mPixmap, mWidth*mHeight);
-	for(int i=1; i < mHeight - 1; i++)
+	if(mType ==  IMG_PGM_BIN)
 	{
-		for(int j=1; j< mWidth -1 ; j++)
+		uint8_t* mPixCopy = new uint8_t[mWidth*mHeight];
+		memcpy(mPixCopy, mPixmap, mWidth*mHeight);
+		for(int i=1; i < mHeight - 1; i++)
 		{
-			int offPixel = i*mWidth + j;
-			int valPixel = (-mPixCopy[offPixel-mWidth-1] -2*mPixCopy[offPixel-1] - mPixCopy[offPixel+mWidth-1] + mPixCopy[offPixel - mWidth+1] +2*mPixCopy[offPixel +1] + mPixCopy[offPixel+mWidth+1])/4;
-			valPixel = valPixel + (mPixCopy[offPixel-mWidth-1] +2*mPixCopy[offPixel-mWidth] + mPixCopy[offPixel-mWidth+1] - mPixCopy[offPixel + mWidth-1] - 2*mPixCopy[offPixel+mWidth] - mPixCopy[offPixel+mWidth+1])/4;
-			valPixel /=2;
-			mPixmap[offPixel] = (char)valPixel;
+			for(int j=1; j< mWidth -1 ; j++)
+			{
+				int offPixel = i*mWidth + j;
+				int valPixel = (-mPixCopy[offPixel-mWidth-1] -2*mPixCopy[offPixel-1] - mPixCopy[offPixel+mWidth-1] + mPixCopy[offPixel - mWidth+1] +2*mPixCopy[offPixel +1] + mPixCopy[offPixel+mWidth+1])/4;
+				valPixel = valPixel + (mPixCopy[offPixel-mWidth-1] +2*mPixCopy[offPixel-mWidth] + mPixCopy[offPixel-mWidth+1] - mPixCopy[offPixel + mWidth-1] - 2*mPixCopy[offPixel+mWidth] - mPixCopy[offPixel+mWidth+1])/4;
+				valPixel /=2;
+				mPixmap[offPixel] = (char)valPixel;
+			}
 		}
+		delete[] mPixCopy;
 	}
-	delete[] mPixCopy;
+	else
+	{
+		uint8_t* mPixCopy = new uint8_t[mWidth*mHeight];
+		memcpy(mPixCopy, mPixmap, mWidth*mHeight);
+		for(int i=1; i < mHeight - 1; i++)
+		{
+			for(int j=1; j< mWidth -1 ; j++)
+			{
+				int offPixel = i*mWidth + j;
+				// Sobel sur R
+				int valPixelR = (-mPixCopy[offPixel-mWidth-1] -2*mPixCopy[offPixel-1] - mPixCopy[offPixel+mWidth-1] + mPixCopy[offPixel - mWidth+1] +2*mPixCopy[offPixel +1] + mPixCopy[offPixel+mWidth+1])/4;
+				valPixelR = valPixelR + (mPixCopy[offPixel-mWidth-1] +2*mPixCopy[offPixel-mWidth] + mPixCopy[offPixel-mWidth+1] - mPixCopy[offPixel + mWidth-1] - 2*mPixCopy[offPixel+mWidth] - mPixCopy[offPixel+mWidth+1])/4;
+				valPixelR /=2;
+				mPixmap[offPixel] = (char)valPixelR;
+
+				// Sobel sur G
+				int valPixelG = (-mPixCopy[offPixel+1-mWidth-1] -2*mPixCopy[offPixel+1-1] - mPixCopy[offPixel+1+mWidth-1] + mPixCopy[offPixel+1 - mWidth+1] +2*mPixCopy[offPixel+1 +1] + mPixCopy[offPixel+1+mWidth+1])/4;
+				valPixelG = valPixelG + (mPixCopy[offPixel+1-mWidth-1] +2*mPixCopy[offPixel+1-mWidth] + mPixCopy[offPixel+1-mWidth+1] - mPixCopy[offPixel+1 + mWidth-1] - 2*mPixCopy[offPixel+1+mWidth] - mPixCopy[offPixel+1+mWidth+1])/4;
+				valPixelG /=2;
+				mPixmap[offPixel+1] = (char)valPixelG;
+
+				// Sobel sur B
+				int valPixelB = (-mPixCopy[offPixel+2-mWidth-1] -2*mPixCopy[offPixel+2-1] - mPixCopy[offPixel+2+mWidth-1] + mPixCopy[offPixel+2 - mWidth+1] +2*mPixCopy[offPixel+2 +1] + mPixCopy[offPixel+2+mWidth+1])/4;
+				valPixelB = valPixelB + (mPixCopy[offPixel+2-mWidth-1] +2*mPixCopy[offPixel+2-mWidth] + mPixCopy[offPixel+2-mWidth+1] - mPixCopy[offPixel+2 + mWidth-1] - 2*mPixCopy[offPixel+2+mWidth] - mPixCopy[offPixel+2+mWidth+1])/4;
+				valPixelB /=2;
+				mPixmap[offPixel+2] = (char)valPixelB;
+			}
+		}
+		delete[] mPixCopy;
+	}
 }
 
 
@@ -86,6 +127,7 @@ void PnmImage::loadBin()
 		}
 		mOffsetPixmap++;
 	}
+	std::cout << "Offset pixmap : " << mOffsetPixmap << std::endl;
 	mHeader = new uint8_t[mOffsetPixmap];
 	memcpy(mHeader, mData, mOffsetPixmap);
 	int elementAGet = 0;
@@ -118,13 +160,49 @@ void PnmImage::loadBin()
 	}
 	if(mWidth*mHeight > mTaille - mOffsetPixmap)
 	{
+		std::cout << "Erreur taille" << std::endl;
 	}
-	std::cout << "Width : " << mWidth << " Height : " << mHeight << " Max Value : " << mMaxVal << std::endl;
-	mPixmap = new uint8_t[mWidth * mHeight];
-	memcpy(mPixmap, mData+mOffsetPixmap, mWidth * mHeight);
+	std::cout << "Width : " << mWidth << " Height : " << mHeight << " Max Value : " << mMaxVal << " Offset debut données : " << mOffsetPixmap << std::endl;
+	if(mType == IMG_PGM_BIN)
+	{
+		mPixmap = new uint8_t[mWidth * mHeight];
+		memcpy(mPixmap, &mData[mOffsetPixmap], mWidth * mHeight);
+
+		std::ofstream file("dump.rgb", std::ios::out | std::ios::binary);
+		file.write((char*)mPixmap, mWidth * mHeight);
+	}
+	else
+	{
+		mPixmap = new uint8_t[mWidth*mHeight*3];
+		memcpy(mPixmap, &mData[mOffsetPixmap], mWidth*mHeight*3);
+
+		std::ofstream file("dump.rgb", std::ios::out | std::ios::binary);
+		file.write((char*)mPixmap, mWidth * mHeight*3);
+	}
 }
 
+uint8_t* PnmImage::getRgb()
+{
+	uint8_t* output;
+	if(mType == IMG_PGM_BIN)
+	{
+		output = new uint8_t[mWidth*mHeight*3];
+		int j=0;
+		for(int i=0; i < mWidth*mHeight; i++)
+		{
+			output[j] = mPixmap[i];
+			output[j+1] = mPixmap[i];
+			output[j+2] = mPixmap[i];
 
+			j+=3;
+		}
+	}
+	else
+	{
+		output = mPixmap;
+	}
+	return output;
+}
 void PnmImage::loadFromFile(std::string iFileName)
 {
 	loadFromFile(iFileName.c_str());

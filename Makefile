@@ -2,11 +2,11 @@ CC=g++
 CXXFLAGS=-Wall -Wno-write-strings -std=c++11
 LDFLAGS=
 BUILDFOLD=build
-all: pnmview
+all: pnmview-static
 
 pnmview-static: pnmview.cc libpxm-static
 	$(CC) -c pnmview.cc -I./headers $(CXXFLAGS)
-	$(CC) pnmview.o -o pnmview -L. -lpxm
+	$(CC) pnmview.o -o pnmview -L. -lpxm -lsfml-graphics -lsfml-window -lsfml-system -lopengl32 -lglew32 
 
 pnmview: pnmview.cc libpxm
 	$(CC) -c pnmview.cc -I./headers $(CXXFLAGS)
