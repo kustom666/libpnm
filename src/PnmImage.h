@@ -20,6 +20,14 @@ public:
 
 	void appliqueSobel();
 
+	void historiser ();
+	int kld (int * comparaison);
+	float Bhattacharyya (int * comparaison);
+	float * normaliser (int * histogramme);
+	void moyenneGradient ();
+	void nombreContour ();
+	void histogrammeCumule ();
+
 	std::string getMType(){return mType;}
 
 private:

@@ -24,7 +24,6 @@ public:
 	virtual float * normaliser (int * histogramme) = 0;
 	virtual void moyenneGradient () = 0;
 	virtual void nombreContour () = 0;
-	virtual void histogrammeCumule () = 0;
 
 	int getMWidth(){ return mWidth; }
 	int getMHeight(){ return mHeight; }

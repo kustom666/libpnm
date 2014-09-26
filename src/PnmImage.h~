@@ -26,7 +26,6 @@ public:
 	float * normaliser (int * histogramme);
 	void moyenneGradient ();
 	void nombreContour ();
-	void histogrammeCumule ();
 
 	std::string getMType(){return mType;}
 
