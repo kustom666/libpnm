@@ -32,6 +32,10 @@ public:
 
 	int getMType(){return mType;}
 	uint8_t* getRgb();
+
+	int getTauxRouge();
+	int getTauxVert();
+	int getTauxBleu();
 	
 private:
 	void loadBin();

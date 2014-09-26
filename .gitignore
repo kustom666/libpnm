@@ -6,3 +6,6 @@ pnmview
 *.ppm
 *.so
 *.a
+*~
+src/*~
+headers/*~

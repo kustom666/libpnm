@@ -123,6 +123,42 @@ void PnmImage::appliqueSobel(int aSeuil)
 	}
 }
 
+int PnmImage::getTauxRouge()
+{
+	uint8_t* rgb = getRgb(); 
+	int somme;
+	for(int i=0; i< mWidth*mHeight*3; i+=3)
+	{
+		somme += rgb[i];
+	}
+	somme /= mWidth * mHeight;
+	return somme;
+}
+
+int PnmImage::getTauxVert()
+{
+	uint8_t* rgb = getRgb(); 
+	int somme;
+	for(int i=1; i< mWidth*mHeight*3; i+=3)
+	{
+		somme += rgb[i];
+	}
+	somme /= mWidth * mHeight;
+	return somme;
+}	
+
+
+int PnmImage::getTauxBleu()
+{
+	uint8_t* rgb = getRgb(); 
+	int somme;
+	for(int i=2; i< mWidth*mHeight*3; i+=3)
+	{
+		somme += rgb[i];
+	}
+	somme /= mWidth * mHeight;
+	return somme;
+}
 
 void PnmImage::loadBin()
 {
