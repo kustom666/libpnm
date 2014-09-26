@@ -32,6 +32,9 @@ public:
 	int getNbContour () {return nbContour;}
 	int getHistoCumule () {return histoCumule;}
 	uint8_t* getMPixmapMod(){return mPixmapMod;}
+	uint8_t* getR();
+	uint8_t* getG();
+	uint8_t* getB();
 protected:
 	int mWidth;
 	int mHeight;

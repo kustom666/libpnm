@@ -23,7 +23,6 @@ public:
 	virtual void moyenneGradient (int aSeuil) = 0;
 	virtual void nombreContour (int aSeuil) = 0;
 	virtual void histogrammeCumule () = 0;
-	virtual int comparaison (BaseImage * compare, int mode) = 0;
 
 	int getMWidth(){ return mWidth; }
 	int getMHeight(){ return mHeight; }
@@ -33,6 +32,14 @@ public:
 	int getNbContour () {return nbContour;}
 	int getHistoCumule () {return histoCumule;}
 	uint8_t* getMPixmapMod(){return mPixmapMod;}
+<<<<<<< HEAD
+=======
+	uint8_t* getR();
+	uint8_t* getG();
+	uint8_t* getB();
+
+	
+>>>>>>> 60b39535f59f50de044ff102571eb2de2d8576a0
 protected:
 	int mWidth;
 	int mHeight;
