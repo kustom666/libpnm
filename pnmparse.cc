@@ -1,9 +1,19 @@
 #include <iostream>
 #include <PnmImage.h>
 #include <dirent.h>
+#include <sqlite3.h>
 
 int main(int argc, char const *argv[])
 {
+	int dbHandle;
+	sqlite3 *db;
+	dbHandle = sqlite3_open("dbImages.sqlite", &db);
+	if(dbHandle)
+	{
+		fprintf(stderr, "Impossible d'ouvrir la base de données dbImages.sqlite : %s\n", sqlite3_errmsg(db));
+		sqlite3_close(db);
+		return 1;
+	}
 
 	DIR *dir;
 	struct dirent *ent;
@@ -36,7 +46,7 @@ int main(int argc, char const *argv[])
 	  closedir (dir);
 	} else {
 	  /* could not open directory */
-	  perror ("");
+	  perror ("Impossible d'ouvrir le repertoire courant\n");
 	  return EXIT_FAILURE;
 	}
 	return 0;

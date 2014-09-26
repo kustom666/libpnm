@@ -11,7 +11,7 @@ pnmview-static: pnmview.cc libpxm-static
 
 pnmparse-static: pnmparse.cc libpxm-static
 	$(CC) -c pnmparse.cc -I./headers $(CXXFLAGS)
-	$(CC) pnmparse.o -o pnmparse -L. -lpxm
+	$(CC) pnmparse.o -o pnmparse -L. -lpxm -lsqlite3
 	cp pnmparse bin/pnmparse
 
 pnmview: pnmview.cc libpxm

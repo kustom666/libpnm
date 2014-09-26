@@ -20,6 +20,9 @@ public:
 	int getMHeight(){ return mHeight; }
 	uint8_t* getMPixmap(){return mPixmap;}
 	uint8_t* getMPixmapMod(){return mPixmapMod;}
+	uint8_t* getR();
+	uint8_t* getG();
+	uint8_t* getB();
 
 	
 protected:
