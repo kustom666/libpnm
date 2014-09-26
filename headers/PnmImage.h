@@ -1,5 +1,7 @@
 #ifndef DEF_PGM_IMAGE
 #define DEF_PGM_IMAGE
+#define IMG_PPM_BIN 0x01
+#define IMG_PGM_BIN 0x02
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -18,23 +20,23 @@ public:
 	void loadFromFile(std::string iFileName);
 	void saveToFile(std::string iFileName);
 
-	void appliqueSobel();
-
 	void historiser ();
 	int kld (int * comparaison);
 	float Bhattacharyya (int * comparaison);
 	float * normaliser (int * histogramme);
-	void moyenneGradient ();
-	void nombreContour ();
+	void moyenneGradient (int aSeuil);
+	void nombreContour (int aSeuil);
 	void histogrammeCumule ();
+	void appliqueSobel(int aSeuil);
 
-	std::string getMType(){return mType;}
-
+	int getMType(){return mType;}
+	uint8_t* getRgb();
+	
 private:
 	void loadBin();
 
 private:
-	std::string mType;
+	int mType;
 	int mMinVal;
 	int mMaxVal;
 	bool utilise;

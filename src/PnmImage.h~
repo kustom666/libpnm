@@ -1,5 +1,7 @@
 #ifndef DEF_PGM_IMAGE
 #define DEF_PGM_IMAGE
+#define IMG_PPM_BIN 0x01
+#define IMG_PGM_BIN 0x02
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -18,6 +20,7 @@ public:
 	void loadFromFile(std::string iFileName);
 	void saveToFile(std::string iFileName);
 
+<<<<<<< HEAD
 	void appliqueSobel();
 
 	void historiser ();
@@ -26,14 +29,21 @@ public:
 	float * normaliser (int * histogramme);
 	void moyenneGradient ();
 	void nombreContour ();
+	void histogrammeCumule ();
 
 	std::string getMType(){return mType;}
+=======
+	void appliqueSobel(int aSeuil);
+>>>>>>> 04e21609ae93ed62bf3867c79c9e6613f17c2a82
 
+	int getMType(){return mType;}
+	uint8_t* getRgb();
+	
 private:
 	void loadBin();
 
 private:
-	std::string mType;
+	int mType;
 	int mMinVal;
 	int mMaxVal;
 	bool utilise;

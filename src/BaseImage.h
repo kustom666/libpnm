@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#define SEUIL 10
-
 class BaseImage
 {
 public:
@@ -16,14 +14,14 @@ public:
 
 	virtual void saveToFile(char* iFileName) = 0;
 	virtual void saveToFile(std::string iFileName) = 0;
-	virtual void appliqueSobel() = 0;
+	virtual void appliqueSobel(int aSeuil) = 0;
 
 	virtual void historiser () = 0;
 	virtual int kld (int * comparaison) = 0;
 	virtual float Bhattacharyya (int * comparaison) = 0;
 	virtual float * normaliser (int * histogramme) = 0;
-	virtual void moyenneGradient () = 0;
-	virtual void nombreContour () = 0;
+	virtual void moyenneGradient (int aSeuil) = 0;
+	virtual void nombreContour (int aSeuil) = 0;
 	virtual void histogrammeCumule () = 0;
 
 	int getMWidth(){ return mWidth; }
@@ -32,6 +30,7 @@ public:
 	int * getHistogramme () {return histogramme;}
 	int getMoyGradient () {return moyGradient;}
 	int getNbContour () {return nbContour;}
+	uint8_t* getMPixmapMod(){return mPixmapMod;}
 protected:
 	int mWidth;
 	int mHeight;
@@ -41,6 +40,7 @@ protected:
 	char* mFileName;
 	uint8_t* mData;
 	uint8_t* mPixmap;
+	uint8_t* mPixmapMod;
 	uint8_t* mHeader;
 
 	int * histogramme;
