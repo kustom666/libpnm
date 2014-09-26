@@ -70,7 +70,7 @@ void PnmImage::appliqueSobel(int aSeuil)
 	if(mType ==  IMG_PGM_BIN)
 	{
 		uint8_t* mPixCopy = new uint8_t[mWidth*mHeight];
-		memcpy(mPixClopy, mPixmap, mWidth*mHeight);
+		memcpy(mPixCopy, mPixmap, mWidth*mHeight);
 		for(int i=1; i < mHeight - 1; i++)
 		{
 			for(int j=1; j< mWidth -1 ; j++)
@@ -113,9 +113,9 @@ void PnmImage::appliqueSobel(int aSeuil)
 				mPixmap[offPixel+1] = (char)valPixelG;
 
 				// Sobel sur B
-				int valPixelB = (-mPixCopy[offPixel+2-mWidth-1] -2*mPixCopy[offPixel+2-1] - mPixCopy[offPixel+2+mWidth-1] + mPixCopy[offPixel+2 - mWidth+1] +2*mPixCopy[offPixel+2 +1] + mPixCopy[offPixel+2+mWidth+1])/4;
-				valPixelB = valPixelB + (mPixCopy[offPixel+2-mWidth-1] +2*mPixCopy[offPixel+2-mWidth] + mPixCopy[offPixel+2-mWidth+1] - mPixCopy[offPixel+2 + mWidth-1] - 2*mPixCopy[offPixel+2+mWidth] - mPixCopy[offPixel+2+mWidth+1])/4;
-				valPixelB /=2;
+				int valPixelB = pow((-mPixCopy[offPixel+2-mWidth-1] -2*mPixCopy[offPixel+2-1] - mPixCopy[offPixel+2+mWidth-1] + mPixCopy[offPixel+2 - mWidth+1] +2*mPixCopy[offPixel+2 +1] + mPixCopy[offPixel+2+mWidth+1])/4, 2);
+				valPixelB = valPixelB + pow((mPixCopy[offPixel+2-mWidth-1] +2*mPixCopy[offPixel+2-mWidth] + mPixCopy[offPixel+2-mWidth+1] - mPixCopy[offPixel+2 + mWidth-1] - 2*mPixCopy[offPixel+2+mWidth] - mPixCopy[offPixel+2+mWidth+1])/4, 2);
+				valPixelB = sqrt(valPixelB) / 2;
 				mPixmap[offPixel+2] = (char)valPixelB;
 			}
 		}
@@ -238,7 +238,7 @@ void PnmImage::saveToFile(std::string iFileName)
 }
 
 
-void PnmImage :: historiser ()
+void PnmImage::historiser ()
 {
 	histogramme = new int [mMaxVal + 1];
 	for (int t = 0; t <= mMaxVal; t ++)
@@ -252,7 +252,7 @@ void PnmImage :: historiser ()
 	}
 }
 
-int PnmImage :: kld (int * comparaison)
+int PnmImage::kld (int * comparaison)
 {
 	int difference;
 	difference = 0;
@@ -272,7 +272,7 @@ int PnmImage :: kld (int * comparaison)
 	return difference;
 }
 
-float PnmImage :: Bhattacharyya (int * comparaison)
+float PnmImage::Bhattacharyya (int * comparaison)
 {
 	float difference = 0;
 	float * histoFloat;
@@ -287,7 +287,7 @@ float PnmImage :: Bhattacharyya (int * comparaison)
 	return -log(difference);
 }
 
-float * PnmImage :: normaliser (int * histogramme)
+float * PnmImage::normaliser (int * histogramme)
 {
 	float * histoFloat = new float [mMaxVal + 1];
 	for(int i = 0; i <= mMaxVal; i++){
@@ -297,13 +297,13 @@ float * PnmImage :: normaliser (int * histogramme)
 	return histoFloat;
 }
 
-void PnmImage :: moyenneGradient ()
+void PnmImage::moyenneGradient (int aSeuil)
 {
 	moyGradient = 0;
 
 	for (int i = 0; i < mWidth * mHeight; i ++)
 	{
-		if (mPixmap [i] > SEUIL)
+		if (mPixmap [i] > aSeuil)
 		{
 			moyGradient += mPixmap [i];
 		}
@@ -312,20 +312,20 @@ void PnmImage :: moyenneGradient ()
 	moyGradient /= (mWidth * mHeight);
 }
 
-void PnmImage :: nombreContour ()
+void PnmImage::nombreContour (int aSeuil)
 {
 	nbContour = 0;
 
 	for (int i = 0; i < mWidth * mHeight; i ++)
 	{
-		if (mPixmap [i] > SEUIL)
+		if (mPixmap [i] > aSeuil)
 		{
 			nbContour += mPixmap [i];
 		}
 	}
 }
 
-void PnmImage :: histogrammeCumule ()
+void PnmImage::histogrammeCumule ()
 {
 	float somme = 0;
 	float * histo;
@@ -335,6 +335,70 @@ void PnmImage :: histogrammeCumule ()
 		somme += histo[i];
 	}
 	std :: cout << "La somme donne : " << somme << std :: endl;
+}
+
+int PnmImage::comparaison (PnmImage *compare, int mode)
+{
+	int compare1, compare2, res;
+	switch(mode)
+	{
+		case 1 :
+			std::cout << "comparaison kld : " << std::endl;
+			if(abs(this->kld ((*compare).getHistogramme ())) < 10)
+			{
+				res = 1;
+			}		
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 2 :
+			std::cout << "comparaison battacharyya : " << std::endl;
+			if(this->Bhattacharyya (compare->getHistogramme ()) < 1)
+			{
+				res = 1;
+			}		
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 3 :
+			std::cout << "comparaison moyenne du gradient : " << std::endl;
+			(*compare).moyenneGradient (0);
+			this->moyenneGradient (0);
+			compare1 = compare->getMoyGradient ();
+			compare2 = this->getMoyGradient ();
+			if(abs(compare2 - compare1) < 2)
+			{
+				res = 1;
+			}
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 4 :
+			std::cout << "comparaison nb de contour : " << std::endl;
+			(*compare).nombreContour (0);
+			this->nombreContour (0);
+			compare1 = compare->getNbContour ();
+			compare2 = this->getNbContour ();
+			if(abs(compare2 - compare1) < 200)
+			{
+				res = 1;
+			}
+			else
+			{
+				res = 0;
+			}
+			break;
+		default :
+			res =  0;
+			break;
+	}
+	return res;
 }
 
 

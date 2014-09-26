@@ -20,21 +20,15 @@ public:
 	void loadFromFile(std::string iFileName);
 	void saveToFile(std::string iFileName);
 
-<<<<<<< HEAD
-	void appliqueSobel();
-
 	void historiser ();
 	int kld (int * comparaison);
 	float Bhattacharyya (int * comparaison);
 	float * normaliser (int * histogramme);
-	void moyenneGradient ();
-	void nombreContour ();
+	void moyenneGradient (int aSeuil);
+	void nombreContour (int aSeuil);
 	void histogrammeCumule ();
-
-	std::string getMType(){return mType;}
-=======
 	void appliqueSobel(int aSeuil);
->>>>>>> 04e21609ae93ed62bf3867c79c9e6613f17c2a82
+	int comparaison (int * compare, int mode);
 
 	int getMType(){return mType;}
 	uint8_t* getRgb();

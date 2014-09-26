@@ -30,6 +30,7 @@ public:
 	int * getHistogramme () {return histogramme;}
 	int getMoyGradient () {return moyGradient;}
 	int getNbContour () {return nbContour;}
+	int getHistoCumule () {return histoCumule;}
 	uint8_t* getMPixmapMod(){return mPixmapMod;}
 protected:
 	int mWidth;
@@ -46,6 +47,7 @@ protected:
 	int * histogramme;
 	int moyGradient;
 	int nbContour;
+	int histoCumule;
 };
 
 #endif

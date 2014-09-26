@@ -28,6 +28,7 @@ public:
 	void nombreContour (int aSeuil);
 	void histogrammeCumule ();
 	void appliqueSobel(int aSeuil);
+	int comparaison (PnmImage * compare, int mode);
 
 	int getMType(){return mType;}
 	uint8_t* getRgb();

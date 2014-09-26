@@ -3,8 +3,6 @@
 
 #include <cstdint>
 
-#define SEUIL 10
-
 class BaseImage
 {
 public:
@@ -22,22 +20,19 @@ public:
 	virtual int kld (int * comparaison) = 0;
 	virtual float Bhattacharyya (int * comparaison) = 0;
 	virtual float * normaliser (int * histogramme) = 0;
-	virtual void moyenneGradient () = 0;
-	virtual void nombreContour () = 0;
+	virtual void moyenneGradient (int aSeuil) = 0;
+	virtual void nombreContour (int aSeuil) = 0;
 	virtual void histogrammeCumule () = 0;
+	virtual int comparaison (BaseImage * compare, int mode) = 0;
 
 	int getMWidth(){ return mWidth; }
 	int getMHeight(){ return mHeight; }
 	uint8_t* getMPixmap(){return mPixmap;}
-<<<<<<< HEAD
 	int * getHistogramme () {return histogramme;}
 	int getMoyGradient () {return moyGradient;}
 	int getNbContour () {return nbContour;}
-=======
+	int getHistoCumule () {return histoCumule;}
 	uint8_t* getMPixmapMod(){return mPixmapMod;}
-
-	
->>>>>>> 04e21609ae93ed62bf3867c79c9e6613f17c2a82
 protected:
 	int mWidth;
 	int mHeight;
@@ -53,6 +48,7 @@ protected:
 	int * histogramme;
 	int moyGradient;
 	int nbContour;
+	int histoCumule;
 };
 
 #endif

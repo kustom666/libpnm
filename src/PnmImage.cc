@@ -337,5 +337,69 @@ void PnmImage::histogrammeCumule ()
 	std :: cout << "La somme donne : " << somme << std :: endl;
 }
 
+int PnmImage::comparaison (PnmImage *compare, int mode)
+{
+	int compare1, compare2, res;
+	switch(mode)
+	{
+		case 1 :
+			std::cout << "comparaison kld : " << std::endl;
+			if(abs(this->kld ((*compare).getHistogramme ())) < 1000)
+			{
+				res = 1;
+			}		
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 2 :
+			std::cout << "comparaison battacharyya : " << std::endl;
+			if(this->Bhattacharyya (compare->getHistogramme ()) < 1)
+			{
+				res = 1;
+			}		
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 3 :
+			std::cout << "comparaison moyenne du gradient : " << std::endl;
+			(*compare).moyenneGradient (0);
+			this->moyenneGradient (0);
+			compare1 = compare->getMoyGradient ();
+			compare2 = this->getMoyGradient ();
+			if(abs(compare2 - compare1) < 2)
+			{
+				res = 1;
+			}
+			else
+			{
+				res = 0;
+			}
+			break;
+		case 4 :
+			std::cout << "comparaison nb de contour : " << std::endl;
+			(*compare).nombreContour (0);
+			this->nombreContour (0);
+			compare1 = compare->getNbContour ();
+			compare2 = this->getNbContour ();
+			if(abs(compare2 - compare1) < 200)
+			{
+				res = 1;
+			}
+			else
+			{
+				res = 0;
+			}
+			break;
+		default :
+			res =  0;
+			break;
+	}
+	return res;
+}
+
 
 
